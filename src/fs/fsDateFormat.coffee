@@ -1,13 +1,19 @@
 angular
 .module('formstamp')
-.directive('fsDateFormat', ['$filter', ($filter)->
+.directive('fsDateFormat', ['$filter', 'fsConfig', ($filter, fsConfig)->
     restrict: 'A'
     require: 'ngModel'
     link: (scope, element, attrs, ngModel)->
+      format = attrs.fsDateFormat || fsConfig.dateFormat
+
       ngModel.$formatters.push (value)->
-        $filter('date')(value, 'MM/dd/yyyy')
+        moment(value).format(format)
 
       ngModel.$parsers.unshift (value)->
-        date = new Date(value)
-        if isNaN(date.getTime()) then null else date
+        return null unless value
+        return null if value == ''
+        if moment(value).isValid()
+          new Date(moment(value, format).valueOf())
+        else
+          null
   ])

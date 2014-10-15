@@ -24,6 +24,13 @@ angular
   restrict: 'AE'
   template: (el, attrs) ->
     modelName = el.attr("model")
+    action = el.attr("action")
+    formAttributes = {
+      name: 'form'
+      class: 'form-horizontal'
+      novalidate: ''
+    }
+    formAttributes[attr.name] = attr.value for attr in el.prop("attributes")
 
     inputReplacer = () ->
       input = $(this)
@@ -76,8 +83,4 @@ angular
       .replaceWith(rowReplacer)
       .end().html()
 
-    """
-    <form name='form' class='form-horizontal' novalidate>
-      #{html}
-    </form>
-    """
+    $('<form>', formAttributes).html(html)[0].outerHTML
